@@ -10,4 +10,5 @@ venv/
 .ipynb_checkpoints/
 *.png
 !src/**/*.png
+!docs/*.png
 .DS_Store

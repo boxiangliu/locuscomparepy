@@ -8,6 +8,7 @@ from plotnine import (
     labs,
     scale_color_manual,
     scale_x_continuous,
+    scale_y_continuous,
     theme,
     theme_classic,
 )
@@ -55,8 +56,10 @@ def make_scatterplot(df, title1, title2):
         ggplot(df, aes("logp1", "logp2"))
         + geom_point(aes(color="r2_group"), size=2.0, alpha=0.8)
         + geom_point(lead, aes("logp1", "logp2"), color=_PURPLE, shape="D", size=4.0)
-        + geom_text(lead, aes("logp1", "logp2", label="rsid"), va="bottom", size=9)
+        + geom_text(lead, aes("logp1", "logp2", label="rsid"), va="bottom", ha="right", size=9)
         + scale_color_manual(values=_COLOR_HEX, name="r2", drop=False)
+        + scale_x_continuous(expand=(0.06, 0, 0.10, 0))
+        + scale_y_continuous(expand=(0.05, 0, 0.13, 0))
         + labs(x=f"{title1} -log10(P)", y=f"{title2} -log10(P)")
         + theme_classic()
     )
@@ -69,9 +72,10 @@ def make_locuszoom(df, title, chr, ycol):
         ggplot(df, aes("pos", ycol))
         + geom_point(aes(color="r2_group"), size=2.0, alpha=0.8)
         + geom_point(lead, aes("pos", ycol), color=_PURPLE, shape="D", size=4.0)
-        + geom_text(lead, aes("pos", ycol, label="rsid"), va="bottom", size=9)
+        + geom_text(lead, aes("pos", ycol, label="rsid"), va="bottom", ha="center", size=9)
         + scale_color_manual(values=_COLOR_HEX, drop=False)
-        + scale_x_continuous(labels=lambda xs: [f"{x / 1e6:.1f}" for x in xs])
+        + scale_x_continuous(labels=lambda xs: [f"{x / 1e6:.1f}" for x in xs], expand=(0.05, 0, 0.05, 0))
+        + scale_y_continuous(expand=(0.05, 0, 0.13, 0))
         + labs(x=f"chr{chr} (Mb)", y=f"{title} -log10(P)")
         + theme_classic()
         + theme(legend_position="none")
