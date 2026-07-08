@@ -1,0 +1,28 @@
+name: Publish to PyPI
+
+# Builds and publishes to PyPI when a GitHub Release is published.
+# Uses PyPI Trusted Publishing (OIDC) -- no API token stored anywhere.
+# One-time setup on PyPI: add a "pending publisher" for project
+# `locuscomparepy`, owner `boxiangliu`, repo `locuscomparepy`,
+# workflow `publish.yml` (leave the environment field blank).
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # required for trusted publishing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build
+      - run: python -m build
+      - uses: pypa/gh-action-pypi-publish@release/v1
