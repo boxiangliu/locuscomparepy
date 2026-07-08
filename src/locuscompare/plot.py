@@ -62,6 +62,7 @@ def make_scatterplot(df, title1, title2):
         + scale_y_continuous(expand=(0.05, 0, 0.13, 0))
         + labs(x=f"{title1} -log10(P)", y=f"{title2} -log10(P)")
         + theme_classic()
+        + theme(aspect_ratio=1)  # square panel: the LocusCompare scatter
     )
 
 
