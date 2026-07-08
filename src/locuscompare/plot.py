@@ -2,6 +2,8 @@
 import pandas as pd
 from plotnine import (
     aes,
+    element_rect,
+    element_text,
     geom_point,
     geom_text,
     ggplot,
@@ -62,7 +64,15 @@ def make_scatterplot(df, title1, title2):
         + scale_y_continuous(expand=(0.05, 0, 0.13, 0))
         + labs(x=f"{title1} -log10(P)", y=f"{title2} -log10(P)")
         + theme_classic()
-        + theme(aspect_ratio=1)  # square panel: the LocusCompare scatter
+        # square panel, with the r2 legend placed inside it (as in the R package)
+        # so the panel fills its cell and aligns with the stacked LocusZoom panels
+        + theme(
+            aspect_ratio=1,
+            legend_position=(0.84, 0.26),
+            legend_title=element_text(size=9),
+            legend_text=element_text(size=8),
+            legend_background=element_rect(fill="white", alpha=0.6),
+        )
     )
 
 
