@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "locuscomparepy"
-version = "0.1.0"
+version = "0.1.1"
 description = "Visualize GWAS-QTL colocalization events (Python port of the R package locuscomparer)"
 readme = "README.md"
 requires-python = ">=3.10"

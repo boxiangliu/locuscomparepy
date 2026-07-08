@@ -89,7 +89,9 @@ def make_locuszoom(df, title, chr, ycol):
         + scale_y_continuous(expand=(0.05, 0, 0.13, 0))
         + labs(x=f"chr{chr} (Mb)", y=f"{title} -log10(P)")
         + theme_classic()
-        + theme(legend_position="none")
+        # wide-short panels (2:1): two of them stacked equal the square scatter's
+        # height, so the figure has the same proportions as the R package
+        + theme(legend_position="none", aspect_ratio=0.5)
     )
 
 
