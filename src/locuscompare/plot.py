@@ -2,13 +2,13 @@
 import pandas as pd
 from plotnine import (
     aes,
-    element_rect,
-    element_text,
     geom_point,
+    geom_rect,
     geom_text,
     ggplot,
     labs,
     scale_color_manual,
+    scale_fill_identity,
     scale_x_continuous,
     scale_y_continuous,
     theme,
@@ -51,28 +51,63 @@ def _prepare(merged, ld, snp):
     return df
 
 
+def _r2_legend(df):
+    """Data for a small stepped r2 colorbar drawn inside the panel, mirroring the R
+    package's inset legend: five stacked colour blocks with 0.2/0.4/0.6/0.8 ticks,
+    placed in the (usually empty) bottom-right via data-range-relative coordinates.
+    """
+    xr = float(df["logp1"].max())
+    yr = float(df["logp2"].max())
+    colors = ["#00008B", "#87CEEB", "#006400", "#FFA500", "#FF0000"]  # low -> high
+    bx0, bx1 = 0.63 * xr, 0.68 * xr
+    by0, dy = 0.06 * yr, 0.05 * yr
+    bar = pd.DataFrame(
+        {
+            "xmin": bx0,
+            "xmax": bx1,
+            "ymin": [by0 + i * dy for i in range(5)],
+            "ymax": [by0 + (i + 1) * dy for i in range(5)],
+            "fill": colors,
+        }
+    )
+    ticks = pd.DataFrame(
+        {
+            "x": bx1 + 0.015 * xr,
+            "y": [by0 + i * dy for i in range(1, 5)],
+            "label": ["0.2", "0.4", "0.6", "0.8"],
+        }
+    )
+    title = pd.DataFrame(
+        {"x": [(bx0 + bx1) / 2.0], "y": [by0 + 5 * dy + 0.03 * yr], "label": ["r²"]}
+    )
+    return bar, ticks, title
+
+
 def make_scatterplot(df, title1, title2):
-    """LocusCompare scatter: -log10(P) study 1 vs study 2, coloured by r2."""
+    """LocusCompare scatter: -log10(P) study 1 vs study 2, coloured by r2, with an
+    inset stepped r2 colorbar legend (matching the R package)."""
     lead = df[df["is_lead"]]
+    bar, ticks, title = _r2_legend(df)
     return (
         ggplot(df, aes("logp1", "logp2"))
         + geom_point(aes(color="r2_group"), size=2.0, alpha=0.8)
         + geom_point(lead, aes("logp1", "logp2"), color=_PURPLE, shape="D", size=4.0)
         + geom_text(lead, aes("logp1", "logp2", label="rsid"), va="bottom", ha="right", size=9)
-        + scale_color_manual(values=_COLOR_HEX, name="r2", drop=False)
+        + scale_color_manual(values=_COLOR_HEX, guide=None)
+        # inset r2 colorbar (auto legend hidden above)
+        + geom_rect(
+            bar,
+            aes(xmin="xmin", xmax="xmax", ymin="ymin", ymax="ymax", fill="fill"),
+            inherit_aes=False,
+        )
+        + scale_fill_identity()
+        + geom_text(ticks, aes("x", "y", label="label"), ha="left", va="center", size=8, inherit_aes=False)
+        + geom_text(title, aes("x", "y", label="label"), ha="center", va="bottom", size=9, inherit_aes=False)
         + scale_x_continuous(expand=(0.06, 0, 0.10, 0))
         + scale_y_continuous(expand=(0.05, 0, 0.13, 0))
         + labs(x=f"{title1} -log10(P)", y=f"{title2} -log10(P)")
         + theme_classic()
-        # square panel, with the r2 legend placed inside it (as in the R package)
-        # so the panel fills its cell and aligns with the stacked LocusZoom panels
-        + theme(
-            aspect_ratio=1,
-            legend_position=(0.84, 0.26),
-            legend_title=element_text(size=9),
-            legend_text=element_text(size=8),
-            legend_background=element_rect(fill="white", alpha=0.6),
-        )
+        + theme(aspect_ratio=1)  # square: the LocusCompare panel
     )
 
 

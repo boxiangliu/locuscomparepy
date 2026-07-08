@@ -10,7 +10,7 @@ from .db import get_position, retrieve_LD
 from .io import read_metal
 from .plot import make_combined_plot, make_locuszoom, make_scatterplot
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __all__ = [
     "read_metal",
     "get_position",

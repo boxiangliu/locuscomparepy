@@ -1,3 +1,9 @@
+# Version 0.1.2 (2026-07-08):
+
+- The r2 legend is now a compact stepped colorbar drawn inside the scatter panel
+  (five colour blocks with 0.2/0.4/0.6/0.8 ticks), matching the R package's inset
+  legend.
+
 # Version 0.1.1 (2026-07-08):
 
 - Match the R package's figure proportions: the LocusCompare scatter is now a
